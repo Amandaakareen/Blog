@@ -1,0 +1,24 @@
+POST http://localhost:8080/user
+Content-Type: application/json
+
+{
+    "name": "Jon Show",
+    "email": "jon.show11111@gmail.com",
+    "password": "123456"
+}
+
+###
+GET http://localhost:8080/user/3
+Content-Type: application/json
+
+###
+PUT http://localhost:8080/v1/users/1
+Content-Type: application/json
+
+{
+    "password": "567890"
+}
+
+###
+DELETE http://localhost:3333/v1/users/1
+Content-Type: application/json
