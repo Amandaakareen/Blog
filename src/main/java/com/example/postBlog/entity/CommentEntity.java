@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 
 @Entity
+@Table(name = "comments")
 public class CommentEntity {
 
    @Id
@@ -33,7 +35,8 @@ public class CommentEntity {
    
    @Column(name = "content")
    private String content; 
-
+   
+   @JsonIgnore
    @ManyToOne
    @JoinColumn(name = "user_id")
    private UserEntity user; 

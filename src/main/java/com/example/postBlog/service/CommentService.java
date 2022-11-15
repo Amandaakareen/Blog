@@ -40,6 +40,10 @@ public class CommentService {
         List<CommentEntity> list = commentRepository.findByPost(id);
         commentRepository.deleteAll(list);
     }
+    public void deleteListCommentByIdUser(long id){
+        List<CommentEntity> list = commentRepository.findByUser(id);
+        commentRepository.deleteAll(list);
+    }
    
     
 }

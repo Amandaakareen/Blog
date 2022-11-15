@@ -11,6 +11,8 @@ import com.example.postBlog.entity.CommentEntity;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long >{
 
-    @Query("select c from CommentEntity c where post_id = :id")
+    @Query("select c from CommentEntity c join c.post p where p.id = :id")
     List<CommentEntity> findByPost(Long id);
+    @Query("select c from CommentEntity c join c.user u where u.id  = :id")
+    List<CommentEntity> findByUser(Long id);
 }
