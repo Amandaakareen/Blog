@@ -75,13 +75,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserEntity> registerUser (@RequestBody @Valid UserRequest userRequest, @RequestHeader("Authorization") String jwt){
-        try {
-            jwtService.checkToken(jwt);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<UserEntity> registerUser (@RequestBody @Valid UserRequest userRequest){
+    
         UserEntity newUser = new UserEntity();
         Date newData = new Date();
 

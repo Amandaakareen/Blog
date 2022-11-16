@@ -12,7 +12,7 @@ import com.example.postBlog.entity.PostEntity;
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity,Long>  {
   
-    @Query("select p from PostEntity p where user_id = :id")
+    @Query("select p from PostEntity p join p.user u where u.id  = :id")
    List<PostEntity> findAllByUser(Long id);
 
    @Query("select p from PostEntity p left join p.listComment c  where p.id = :id")
