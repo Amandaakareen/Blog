@@ -4,6 +4,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 
@@ -16,7 +18,7 @@ public class UserRequest {
     @Email
     private String email;
 
-    @NotEmpty @NotNull
+    @NotEmpty @NotNull @JsonIgnore
     private String password;
     
 }

@@ -2,9 +2,12 @@ package com.example.postBlog.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+
 import javax.validation.Valid;
 
-
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,24 +39,27 @@ public class UserController {
     UserService userService;
     JwtService jwtService;
     CommentService  commentService;
+    ModelMapper modelMapper;
     
     
-    public UserController(UserService userService, PostService postService, JwtService jwtService, CommentService  commentService) {
+    public UserController(UserService userService, PostService postService, JwtService jwtService, CommentService  commentService, ModelMapper modelMapper) {
         this.userService = userService;  
         this.postService = postService;
         this.jwtService = jwtService;
         this.commentService = commentService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<UserEntity>> findUsers(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<List<UserRequest>> findUsers(@RequestHeader("Authorization") String jwt){
         try {
             jwtService.checkToken(jwt);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
 
-         return ResponseEntity.ok(userService.listUsers());
+         return ResponseEntity.ok(userService.listUsers().stream()
+         .map(this ::userResponse).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")
@@ -142,5 +148,8 @@ public class UserController {
         postService.listDeletePostByUser(id);
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
+    }
+    private UserRequest userResponse(UserEntity userEntity){
+        return modelMapper.map(userEntity, UserRequest.class );
     }
 }
