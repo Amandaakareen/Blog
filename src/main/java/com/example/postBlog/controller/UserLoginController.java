@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.postBlog.controller.request.UserLoginRequest;
+import com.example.postBlog.controller.DTO.UserLoginRequest;
 import com.example.postBlog.error.EntityDoesNotExistException;
 import com.example.postBlog.service.UserService;
 

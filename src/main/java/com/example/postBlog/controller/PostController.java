@@ -1,14 +1,12 @@
 package com.example.postBlog.controller;
 
-
-
 import java.util.Date;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.postBlog.controller.request.PostRequest;
+
+import com.example.postBlog.controller.DTO.CreatPostDTO;
+import com.example.postBlog.controller.DTO.ResponsePostDTO;
 import com.example.postBlog.entity.PostEntity;
 import com.example.postBlog.entity.UserEntity;
 import com.example.postBlog.error.EntityDoesNotExistException;
@@ -43,25 +43,28 @@ public class PostController {
     UserService userService;
     JwtService jwtService;
     CommentService commentService;
+    ModelMapper modelMapper;
 
-    public PostController(PostService postService, UserService userService, JwtService jwtService, CommentService commentService) {
+    public PostController(PostService postService, UserService userService, JwtService jwtService, CommentService commentService, ModelMapper modelMapper) {
         this.postService = postService;
         this.userService= userService;
         this.jwtService =  jwtService;
         this.commentService = commentService;
+        this.modelMapper = modelMapper;
+
     }
     @GetMapping
-    public ResponseEntity< List<PostEntity>> listAllPosts(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity< List<ResponsePostDTO>> listAllPosts(@RequestHeader("Authorization") String jwt){
         
         try {
           jwtService.checkToken(jwt);
        } catch (Exception e) {
           return ResponseEntity.notFound().build();
        }
-        return ResponseEntity.ok(postService.findAllPosts());
+        return ResponseEntity.ok(postService.findAllPosts().stream().map(this::postResponse).collect(Collectors.toList()));
     }
     @GetMapping("{id}")
-    public ResponseEntity<PostEntity> findPostById(@PathVariable Long id,@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<ResponsePostDTO> findPostById(@PathVariable Long id,@RequestHeader("Authorization") String jwt){
         
         try {
           jwtService.checkToken(jwt);
@@ -76,27 +79,24 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
         
-        return ResponseEntity.ok(post);
+        return ResponseEntity.ok(postResponse(post));
     }
 
     @GetMapping("user/{id}")
-    public ResponseEntity< List<PostEntity>> listAllPostsDoUser(@PathVariable Long id, @RequestHeader("Authorization") String jwt){
-
-        
+    public ResponseEntity< List<ResponsePostDTO>> listAllPostsDoUser(@PathVariable Long id, @RequestHeader("Authorization") String jwt){
         try {
           jwtService.checkToken(jwt);
        } catch (Exception e) {
           return ResponseEntity.notFound().build();
        }
-        List<PostEntity> listPost = postService.findAllPostsByUser(id);
-        return ResponseEntity.ok(listPost);
+        return ResponseEntity.ok(postService.findAllPostsByUser(id).stream().map(this :: postResponse).collect(Collectors.toList()));
     }
     
     @PostMapping("{id}")
-    public ResponseEntity<PostEntity> addPost(
+    public ResponseEntity<ResponsePostDTO> addPost(
         @RequestHeader("Authorization") String jwt,
         @PathVariable Long id, 
-        @RequestBody @Valid PostRequest postRequest
+        @RequestBody @Valid CreatPostDTO postRequest
      ){ 
         
          try {
@@ -121,11 +121,11 @@ public class PostController {
 
         postService.addPost(newPost);
         
-        return ResponseEntity.ok(newPost);
+        return ResponseEntity.ok(postResponse(newPost));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<PostEntity> editPost( @PathVariable Long id ,@RequestBody @Valid PostRequest postRequest,  @RequestHeader("Authorization") String jwt){
+    public ResponseEntity<ResponsePostDTO> editPost( @PathVariable Long id ,@RequestBody @Valid CreatPostDTO postRequest,  @RequestHeader("Authorization") String jwt){
         try {
             jwtService.checkToken(jwt);
          } catch (Exception e) {
@@ -142,7 +142,7 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
         postService.editPost(post);    
-        return ResponseEntity.ok(post);
+        return ResponseEntity.ok(postResponse(post));
     }
     
     @DeleteMapping("{id}")
@@ -165,6 +165,11 @@ public class PostController {
         }
 
         return ResponseEntity.ok().build();
+    }
+    private ResponsePostDTO  postResponse(PostEntity postEntity){
+        return modelMapper.map(postEntity, ResponsePostDTO.class);
+
+
     }
 
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.postBlog.controller.request.CommentRequest;
+import com.example.postBlog.controller.DTO.CommentRequest;
 import com.example.postBlog.entity.CommentEntity;
 import com.example.postBlog.entity.PostEntity;
 import com.example.postBlog.entity.UserEntity;

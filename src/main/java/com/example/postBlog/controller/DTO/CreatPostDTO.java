@@ -1,11 +1,11 @@
-package com.example.postBlog.controller.request;
+package com.example.postBlog.controller.DTO;
 
 import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
 
 @Data
-public class PostRequest {
+public class CreatPostDTO {
 
     @NotBlank
     private String title; 
