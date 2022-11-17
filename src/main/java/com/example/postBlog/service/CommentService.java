@@ -20,17 +20,19 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
     
+
     
     public void addComment(CommentEntity newComment){
         commentRepository.save(newComment);
     }
 
-    public void checkComment(Long id){
+    public CommentEntity checkComment(Long id){
         Optional<CommentEntity> checkComment = commentRepository.findById(id);
 
         if(checkComment.isEmpty()){
             throw new CommentDoesNotExistException();
         }
+        return checkComment.get();
     }
     public void deleteComment(Long id){
         commentRepository.deleteById(id);
