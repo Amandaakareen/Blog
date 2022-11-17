@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.postBlog.controller.DTO.UserLoginRequest;
+import com.example.postBlog.controller.DTO.UserLoginDTO;
 import com.example.postBlog.error.EntityDoesNotExistException;
 import com.example.postBlog.service.UserService;
 
@@ -24,7 +24,7 @@ public class UserLoginController {
     }
 
     @PostMapping 
-    public ResponseEntity<String> loginUser(@RequestBody @Valid UserLoginRequest userLoginRequest){
+    public ResponseEntity<String> loginUser(@RequestBody @Valid UserLoginDTO userLoginRequest){
         String newJwt = null;
         try{
             newJwt =  userService.loginUser(userLoginRequest.getEmail(),userLoginRequest.getPassword());

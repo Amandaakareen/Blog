@@ -2,6 +2,8 @@ package com.example.postBlog.controller;
 
 import java.util.Date;
 
+
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.postBlog.controller.DTO.CommentRequest;
+import com.example.postBlog.controller.DTO.CreatCommentDTO;
+import com.example.postBlog.controller.DTO.ResponseCommentDTO;
 import com.example.postBlog.entity.CommentEntity;
 import com.example.postBlog.entity.PostEntity;
 import com.example.postBlog.entity.UserEntity;
@@ -26,16 +29,18 @@ public class CommentController {
 
     CommentService commentService;
     JwtService jwtService;
+    ModelMapper modelMapper;
 
-    public CommentController(CommentService commentService,  JwtService jwtService) {
+    public CommentController(CommentService commentService,  JwtService jwtService, ModelMapper modelMapper) {
         this.commentService = commentService;
         this.jwtService =  jwtService;
+        this.modelMapper = modelMapper;
     }
     
     @PostMapping("user/{idUser}/post/{idPost}")
-    public ResponseEntity<CommentEntity> addComment(@PathVariable Long idUser,
+    public ResponseEntity<ResponseCommentDTO> addComment(@PathVariable Long idUser,
      @PathVariable Long idPost, 
-     @RequestBody CommentRequest comment, @RequestHeader("Authorization") String 
+     @RequestBody CreatCommentDTO comment, @RequestHeader("Authorization") String 
      jwt){
         try {
             jwtService.checkToken(jwt);
@@ -58,7 +63,7 @@ public class CommentController {
         newComment.setUpdated(newDate);
         
         commentService.addComment(newComment);
-        return ResponseEntity.ok(newComment);
+        return ResponseEntity.ok(commentResponse(newComment));
 
     }
     @DeleteMapping("{id}")
@@ -75,6 +80,11 @@ public class CommentController {
         }
         commentService.deleteComment(id);
         return ResponseEntity.ok().build();
+    }
+    private ResponseCommentDTO  commentResponse(CommentEntity CommentEntity){
+        return modelMapper.map(CommentEntity , ResponseCommentDTO.class);
+
+
     }
     
 }
