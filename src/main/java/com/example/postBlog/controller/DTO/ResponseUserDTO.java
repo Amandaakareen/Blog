@@ -1,4 +1,4 @@
-package com.example.postBlog.controller.request;
+package com.example.postBlog.controller.DTO;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -10,8 +10,8 @@ import lombok.Data;
 
 
 @Data
-public class UserRequest {
-   
+public class ResponseUserDTO {
+    
     @NotEmpty @NotNull
     private String name;
 
@@ -20,5 +20,6 @@ public class UserRequest {
 
     @NotEmpty @NotNull @JsonIgnore
     private String password;
+    
     
 }

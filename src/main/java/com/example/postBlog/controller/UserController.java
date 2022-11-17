@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.postBlog.controller.request.UserRequest;
+import com.example.postBlog.controller.DTO.CreateUserDTO;
+import com.example.postBlog.controller.DTO.ResponseUserDTO;
 import com.example.postBlog.entity.UserEntity;
 import com.example.postBlog.error.EntityAlreadyExistException;
 import com.example.postBlog.error.EntityDoesNotExistException ;
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserRequest>> findUsers(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<List<ResponseUserDTO >> findUsers(@RequestHeader("Authorization") String jwt){
         try {
             jwtService.checkToken(jwt);
         } catch (Exception e) {
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserEntity> findUserById(@PathVariable Long id, @RequestHeader("Authorization") String jwt){
+    public ResponseEntity<ResponseUserDTO> findUserById(@PathVariable Long id, @RequestHeader("Authorization") String jwt){
         try {
             jwtService.checkToken(jwt);
         } catch (Exception e) {
@@ -76,13 +77,13 @@ public class UserController {
         }catch(EntityDoesNotExistException  e){
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().body(user);
+        
+        return ResponseEntity.ok().body(userResponse(user));
     } 
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserEntity> registerUser (@RequestBody @Valid UserRequest userRequest){
-    
+    public ResponseEntity<ResponseUserDTO> registerUser (@RequestBody @Valid CreateUserDTO userRequest){
         UserEntity newUser = new UserEntity();
         Date newData = new Date();
 
@@ -103,31 +104,31 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
         
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userResponse(newUser));
     }
      
     @PutMapping("{id}")
-    public ResponseEntity<UserEntity> editUser( @PathVariable ("id") Long id, @RequestBody @Valid UserRequest userRequest, @RequestHeader("Authorization") String jwt){
+    public ResponseEntity<ResponseUserDTO > editUser( @PathVariable ("id") Long id, @RequestBody @Valid CreateUserDTO userRequest, @RequestHeader("Authorization") String jwt){
         try {
             jwtService.checkToken(jwt);
          } catch (Exception e) {
             return ResponseEntity.notFound().build();
          }
+
+         UserEntity user = userService.findUserByIdService(id);
+         Date newDate = new Date();
+
+         user.setName(userRequest.getName());
+         user.setEmail(userRequest.getEmail());
+         user.setPassword(userRequest.getPassword());
+         user.setUpdated(newDate); 
+
         try{
-            UserEntity user = userService.findUserByIdService(id);
-            Date newDate = new Date();
-
-            user.setName(userRequest.getName());
-            user.setEmail(userRequest.getEmail());
-            user.setPassword(userRequest.getPassword());
-            user.setUpdated(newDate); 
-
-            userService.editUser(user);
-            
+            userService.editUser(user);   
         }catch(EntityDoesNotExistException e){
            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userResponse(user));
            
     }
   
@@ -149,7 +150,7 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
-    private UserRequest userResponse(UserEntity userEntity){
-        return modelMapper.map(userEntity, UserRequest.class );
+    private ResponseUserDTO  userResponse(UserEntity userEntity){
+        return modelMapper.map(userEntity, ResponseUserDTO.class );
     }
 }
