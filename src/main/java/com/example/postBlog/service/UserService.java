@@ -3,6 +3,9 @@ package com.example.postBlog.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 import com.example.postBlog.entity.UserEntity;
 import com.example.postBlog.error.DeniedException;
@@ -38,7 +41,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-
+    @Transactional
     public void checkUser(UserEntity newUser){
         String md5 = md5Service.generateMD5(newUser.getPassword());
 
@@ -51,7 +54,7 @@ public class UserService {
        userRepository.save(newUser);
     
     }
-    
+    @Transactional
     public UserEntity editUser(UserEntity userEntity){
         String md5 = md5Service.generateMD5(userEntity.getPassword());
         userEntity.setPassword(md5);
@@ -76,6 +79,7 @@ public class UserService {
         String jwt = jwtService.tokenJwt(user.getId());
         return jwt;
     } 
+    @Transactional
     public void deleteUser(Long id){
         userRepository.deleteById(id);
     

@@ -3,6 +3,8 @@ package com.example.postBlog.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.postBlog.entity.CommentEntity;
@@ -21,11 +23,11 @@ public class CommentService {
     }
     
 
-    
+    @Transactional
     public void addComment(CommentEntity newComment){
         commentRepository.save(newComment);
     }
-
+    @Transactional
     public CommentEntity checkComment(Long id){
         Optional<CommentEntity> checkComment = commentRepository.findById(id);
 
@@ -34,14 +36,16 @@ public class CommentService {
         }
         return checkComment.get();
     }
+    @Transactional
     public void deleteComment(Long id){
         commentRepository.deleteById(id);
     }
-
+    @Transactional
     public void deleteListCommentByIdPost(long id){
         List<CommentEntity> list = commentRepository.findByPost(id);
         commentRepository.deleteAll(list);
     }
+    @Transactional
     public void deleteListCommentByIdUser(long id){
         List<CommentEntity> list = commentRepository.findByUser(id);
         commentRepository.deleteAll(list);

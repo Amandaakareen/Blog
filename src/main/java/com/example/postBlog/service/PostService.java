@@ -3,6 +3,8 @@ package com.example.postBlog.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 import com.example.postBlog.entity.PostEntity;
 import com.example.postBlog.error.PostDoesNotExistException;
@@ -24,7 +26,7 @@ public class PostService {
         List<PostEntity>  listPosts = postRepository.findAll();
         return listPosts;
     }
-
+    @Transactional
     public void addPost(PostEntity newPost){
         postRepository.save(newPost);  
     }
@@ -36,11 +38,11 @@ public class PostService {
         }
         return post.get();
     }
-
+    @Transactional
     public void editPost(PostEntity post){
         postRepository.save(post); 
     }
-
+    @Transactional
     public void deletePostById(Long id){
         Optional<PostEntity> post = postRepository.findById(id);
         if(post.isEmpty()){
