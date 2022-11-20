@@ -26,8 +26,9 @@ public class CommentService {
     @Transactional
     public void addComment(CommentEntity newComment){
         commentRepository.save(newComment);
+        
     }
-    @Transactional
+   
     public CommentEntity checkComment(Long id){
         Optional<CommentEntity> checkComment = commentRepository.findById(id);
 
